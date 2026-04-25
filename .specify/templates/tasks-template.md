@@ -8,7 +8,7 @@ description: "Task list template for feature implementation"
 **Input**: Design documents from `/specs/[###-feature-name]/`
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
-**Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
+**Tests**: Include automated tests that load `examples.json` (or equivalent fixtures) and assert **exact** expected outputs/errors (field names, structure, array order — per constitution). Cover `rules.md` behavior; no waivers unless the spec documents an explicit, justified exception. For HTTP tests, assert status codes (200/400/404/500) and the standard JSON envelopes (`data` / `error`) from `.specify/memory/constitution.md`; include cases for invalid entity references (**400**). Ensure tests cover every `examples.json` case (including each supported valid request class) and defined-error behavior for missing or incomplete state per `rules.md`. Implementation tasks MUST NOT start until `spec.md` / `rules.md` / `examples.json` / `checklist.md` are updated for the scope (spec-evolution order); add new examples before implementing newly supported inputs.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 

@@ -1,0 +1,60 @@
+openapi: 3.1.0
+info:
+  title: Movie Ranker API
+  version: 0.1.0
+paths:
+  /users:
+    post:
+      summary: Create user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [genres]
+              properties:
+                genres:
+                  type: array
+                  items: { type: string }
+      responses:
+        "200":
+          description: Envelope with data user id + genres
+  /movies:
+    get:
+      summary: List movies
+      responses:
+        "200":
+          description: Envelope with data movie list
+  /users/{user_id}/like:
+    post:
+      summary: Like a movie
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [movieId]
+              properties:
+                movieId: { type: string }
+      responses:
+        "200": { description: Success envelope }
+        "400": { description: Invalid movie reference }
+        "404": { description: User not found }
+  /users/{user_id}/recommendations:
+    get:
+      summary: Ranked recommendations
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Envelope with ranked movie ids / payloads per examples }
+        "404": { description: User not found }

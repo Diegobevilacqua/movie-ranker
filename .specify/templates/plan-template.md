@@ -31,7 +31,17 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- **Artifacts**: Feature work traces to `/specs/<feature-name>/` with `spec.md`, `rules.md` (when behavior exists), `examples.json`, `checklist.md` per `.specify/memory/constitution.md`.
+- **Domain**: Recommendations use shared genres only; scoring is deterministic; no ML, probabilistic ranking, or undeclared randomness.
+- **Stack**: Python, FastAPI, Pydantic; routers thin; business logic not in route handlers.
+- **Rules vs spec**: Logic in `rules.md` and implementing code; `spec.md` has no embedded algorithms.
+- **Examples**: `examples.json` is satisfied by tests; edge cases covered.
+- **API contracts**: JSON only; success `{ "data", "error": null }`; errors `{ "data": null, "error": { "code", "message" } }`; statuses 200 / 400 / 404 / 500 per `.specify/memory/constitution.md`.
+- **Strict outputs**: Match `examples.json` exactly (fields, structure, array order); no extra or missing fields; no inference of unspecified behavior; no partial implementations.
+- **Evolution order**: `spec.md` → `rules.md` → `examples.json` → `checklist.md` → code; no code-only behavior changes.
+- **Entities**: String IDs, unique per entity store as in `rules.md`; validate cross-entity references; invalid references → **400** + error envelope (not **404** for bad refs in request bodies).
+- **Scenario coverage**: Every supported valid request class has an `examples.json` entry; expand examples before enabling new inputs in code.
+- **State determinism**: Required inputs and state documented; missing/incomplete state as defined errors in rules/examples—no implicit data assumptions.
 
 ## Project Structure
 

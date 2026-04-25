@@ -5,6 +5,8 @@
 **Status**: Draft  
 **Input**: User description: "$ARGUMENTS"
 
+**Feature artifacts** (`.specify/memory/constitution.md`): under `/specs/<feature-name>/` use `rules.md` (required when behavior exists), `examples.json`, and `checklist.md`. Keep requirements and scenarios here; put all business logic in `rules.md` — no algorithms in this file. HTTP-facing examples MUST use the standard JSON success and error envelopes and status-code rules from the constitution. Behavior changes MUST follow: update `spec.md`, then `rules.md`, then `examples.json`, then `checklist.md`, then code — in that order. Describe entity IDs as strings, uniqueness expectations, and reference validation; invalid references use **400** per the constitution. List request classes and required state explicitly; every supported valid request class MUST have a matching `examples.json` case; document missing/incomplete state as defined errors.
+
 ## User Scenarios & Testing *(mandatory)*
 
 <!--
