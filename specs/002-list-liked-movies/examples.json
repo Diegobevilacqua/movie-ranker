@@ -1,0 +1,39 @@
+{
+  "cases": [
+    {
+      "name": "list_likes_user_missing",
+      "method": "GET",
+      "path": "/users/unknown/likes",
+      "expect_status": 404,
+      "expect_body": {
+        "data": null,
+        "error": {
+          "code": "USER_NOT_FOUND",
+          "message": "user not found"
+        }
+      }
+    },
+    {
+      "name": "list_likes_empty",
+      "method": "GET",
+      "path": "/users/u1/likes",
+      "note": "Prerequisite: u1 exists and has no likes in test fixture",
+      "expect_status": 200,
+      "expect_body": {
+        "data": { "movieIds": [] },
+        "error": null
+      }
+    },
+    {
+      "name": "list_likes_two_ids_sorted",
+      "method": "GET",
+      "path": "/users/u1/likes",
+      "note": "Prerequisite: u1 has likes for m2 and m1; response order must be m1, m2",
+      "expect_status": 200,
+      "expect_body": {
+        "data": { "movieIds": ["m1", "m2"] },
+        "error": null
+      }
+    }
+  ]
+}

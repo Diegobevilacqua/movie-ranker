@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from movie_ranker.errors import AppError
 from movie_ranker.models.domain import Movie, UserProfile
-from movie_ranker.models.dto import CreateUserRequest, MovieOut, RecommendationsData
+from movie_ranker.models.dto import CreateUserRequest, LikedMoviesData, MovieOut, RecommendationsData
 from movie_ranker.repositories.memory import InMemoryRepository
 
 
@@ -40,6 +40,12 @@ class UserService:
         if self._repo.get_movie(movie_id) is None:
             raise AppError(400, "MOVIE_NOT_FOUND", "movie not found")
         self._repo.add_like(user_id, movie_id)
+
+    def list_likes(self, user_id: str) -> LikedMoviesData:
+        if self._repo.get_user(user_id) is None:
+            raise AppError(404, "USER_NOT_FOUND", "user not found")
+        ids = sorted(self._repo.get_likes(user_id))
+        return LikedMoviesData(movieIds=ids)
 
     def get_recommendations(self, user_id: str) -> RecommendationsData:
         user = self._repo.get_user(user_id)

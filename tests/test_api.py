@@ -96,6 +96,32 @@ def test_determinism_repeat_calls(client: TestClient) -> None:
     assert a == b
 
 
+def test_get_likes_unknown_user_404(client: TestClient) -> None:
+    r = client.get("/users/nobody/likes")
+    assert r.status_code == 404
+    assert r.json()["error"]["code"] == "USER_NOT_FOUND"
+
+
+def test_get_likes_empty(client: TestClient) -> None:
+    client.post("/users", json={"userId": "u1"})
+    r = client.get("/users/u1/likes")
+    assert r.status_code == 200
+    assert r.json() == {
+        "data": {"movieIds": []},
+        "error": None,
+    }
+
+
+def test_get_likes_sorted_and_deterministic(client: TestClient) -> None:
+    client.post("/users", json={"userId": "u1"})
+    client.post("/users/u1/likes", json={"movieId": "m2"})
+    client.post("/users/u1/likes", json={"movieId": "m1"})
+    a = client.get("/users/u1/likes").json()
+    b = client.get("/users/u1/likes").json()
+    assert a == b
+    assert a["data"]["movieIds"] == ["m1", "m2"]
+
+
 def test_response_envelope_shape(client: TestClient) -> None:
     client.post("/users", json={"userId": "u1"})
     r = client.get("/users/u1/recommendations")
