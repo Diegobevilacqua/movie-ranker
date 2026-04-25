@@ -10,7 +10,7 @@ from fastapi.responses import JSONResponse
 from movie_ranker.api.deps import get_service
 from movie_ranker.api.responses import err, ok
 from movie_ranker.errors import AppError
-from movie_ranker.models.dto import CreateUserRequest, LikeMovieRequest, RecommendationsData
+from movie_ranker.models.dto import CreateUserRequest, LikeMovieRequest, LikedMoviesData, RecommendationsData
 from movie_ranker.services.user_service import UserService
 
 router = APIRouter()
@@ -74,6 +74,19 @@ def add_like(
         status, payload = err(e.status_code, e.code, e.message)
         return JSONResponse(status_code=status, content=payload)
     return JSONResponse(status_code=200, content=ok({"movieId": req.movieId}))
+
+
+@router.get("/users/{user_id}/likes")
+def list_likes(
+    user_id: str,
+    svc: Annotated[UserService, Depends(get_service)],
+) -> JSONResponse:
+    try:
+        data: LikedMoviesData = svc.list_likes(user_id.strip())
+    except AppError as e:
+        status, payload = err(e.status_code, e.code, e.message)
+        return JSONResponse(status_code=status, content=payload)
+    return JSONResponse(status_code=200, content=ok(data))
 
 
 @router.get("/users/{user_id}/recommendations")

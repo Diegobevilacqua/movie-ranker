@@ -69,3 +69,9 @@ class MovieOut(BaseModel):
 
 class RecommendationsData(BaseModel):
     movies: list[MovieOut]
+
+
+class LikedMoviesData(BaseModel):
+    """GET /users/{id}/likes success payload per specs/002-list-liked-movies/rules.md."""
+
+    movieIds: list[str]

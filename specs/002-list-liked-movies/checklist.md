@@ -5,18 +5,18 @@
 
 ## Specification & artifacts
 
-- [ ] `spec.md` and `rules.md` approved for this scope
-- [ ] `examples.json` covers: unknown user (404), empty likes (200), non-empty ordered list (200)
-- [ ] `checklists/requirements.md` (spec quality) complete
+- [x] `spec.md` and `rules.md` approved for this scope
+- [x] `examples.json` covers: unknown user (404), empty likes (200), non-empty ordered list (200)
+- [x] `checklists/requirements.md` (spec quality) complete
 
 ## Behavior
 
-- [ ] GET returns **404** + `USER_NOT_FOUND` for unknown `userId`
-- [ ] GET returns **200** + `movieIds` sorted ascending; empty array when no likes
-- [ ] No duplicates in `movieIds`
-- [ ] Envelope shape matches `.specify/memory/constitution.md`
+- [x] GET returns **404** + `USER_NOT_FOUND` for unknown `userId`
+- [x] GET returns **200** + `movieIds` sorted ascending; empty array when no likes
+- [x] No duplicates in `movieIds`
+- [x] Envelope shape matches `.specify/memory/constitution.md`
 
 ## Quality gates
 
-- [ ] Contract tests assert exact `examples.json` bodies where applicable
-- [ ] Determinism: two GETs in a row return identical JSON
+- [x] Contract tests assert exact `examples.json` bodies where applicable
+- [x] Determinism: two GETs in a row return identical JSON
