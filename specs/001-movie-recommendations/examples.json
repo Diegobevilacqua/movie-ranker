@@ -1,0 +1,47 @@
+{
+  "cases": [
+    {
+      "name": "set_genres_empty",
+      "method": "POST",
+      "path": "/users/u1/genres",
+      "body": { "genres": [] },
+      "expect_status": 400,
+      "expect_body": {
+        "data": null,
+        "error": { "code": "INVALID_INPUT", "message": "genres must be a non-empty array" }
+      }
+    },
+    {
+      "name": "set_genres_user_missing",
+      "method": "POST",
+      "path": "/users/unknown/genres",
+      "body": { "genres": ["action"] },
+      "expect_status": 404,
+      "expect_body": {
+        "data": null,
+        "error": { "code": "USER_NOT_FOUND", "message": "user not found" }
+      }
+    },
+    {
+      "name": "like_movie_missing",
+      "method": "POST",
+      "path": "/users/u1/likes",
+      "body": { "movieId": "no-such-movie" },
+      "expect_status": 400,
+      "expect_body": {
+        "data": null,
+        "error": { "code": "MOVIE_NOT_FOUND", "message": "movie not found" }
+      }
+    },
+    {
+      "name": "recommendations_user_missing",
+      "method": "GET",
+      "path": "/users/unknown/recommendations",
+      "expect_status": 404,
+      "expect_body": {
+        "data": null,
+        "error": { "code": "USER_NOT_FOUND", "message": "user not found" }
+      }
+    }
+  ]
+}
