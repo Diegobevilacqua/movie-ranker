@@ -1,0 +1,16 @@
+{
+  "cases": [
+    {
+      "name": "post_like_success_inherited",
+      "description": "No new server behavior; 004 reuses this envelope for like success tests. New likes must match server validation.",
+      "method": "POST",
+      "path": "/users/u1/likes",
+      "body": { "movieId": "m1" },
+      "expect_status": 200,
+      "expect_body": {
+        "data": { "movieId": "m1" },
+        "error": null
+      }
+    }
+  ]
+}
