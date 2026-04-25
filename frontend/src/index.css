@@ -332,17 +332,104 @@ button:not(:disabled):active {
   border-color: var(--border-strong);
 }
 
-.btn--like {
+/* ——— Like heart (004) ——— */
+
+.like-heart {
   flex-shrink: 0;
-  padding: 0.4rem 0.8rem;
-  font-size: 0.8rem;
-  background: var(--accent-dim);
-  color: var(--accent);
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(248, 113, 150, 0.35);
+  background: rgba(244, 63, 94, 0.12);
+  color: #fda4af;
+  cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2) inset;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
-.btn--like:hover:not(:disabled) {
-  background: rgba(56, 189, 248, 0.22);
+.like-heart:hover:not(:disabled) {
+  background: rgba(244, 63, 94, 0.22);
+  color: #fecdd3;
+  border-color: rgba(251, 113, 133, 0.45);
+}
+
+.like-heart:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.like-heart:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.like-heart__icon {
+  display: block;
+  overflow: visible;
+}
+
+.like-heart__path {
+  fill: currentColor;
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 0.5;
+}
+
+.like-heart--liked {
+  color: #fb7185;
+  background: rgba(244, 63, 94, 0.35);
+  border-color: rgba(251, 113, 133, 0.55);
+}
+
+.like-heart--liked .like-heart__path {
+  fill: #fb7185;
+  stroke: rgba(190, 18, 60, 0.45);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .like-heart--save-pulse {
+    animation: like-heart-saved 0.55s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .like-heart--save-pulse {
+    box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.5);
+  }
+}
+
+@keyframes like-heart-saved {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.2);
+  }
+  55% {
+    transform: scale(0.95);
+  }
+  70% {
+    transform: scale(1.08);
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ——— Alert ——— */

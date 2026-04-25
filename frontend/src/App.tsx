@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   addLike,
   createUser,
@@ -8,6 +8,7 @@ import {
   ApiError,
   NetworkError,
 } from "./api/client";
+import { LikeHeartButton } from "./components/LikeHeartButton";
 import type { MovieOut } from "./types/api";
 
 function parseGenreInput(raw: string): string[] {
@@ -36,8 +37,15 @@ export function App() {
   const [genresInput, setGenresInput] = useState("action, drama");
   const [recommendations, setRecommendations] = useState<MovieOut[] | null>(null);
   const [likedIds, setLikedIds] = useState<string[] | null>(null);
+  const [saveFeedbackMovieId, setSaveFeedbackMovieId] = useState<string | null>(null);
   const [lastError, setLastError] = useState<ReturnType<typeof formatError> | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (saveFeedbackMovieId == null) return;
+    const t = window.setTimeout(() => setSaveFeedbackMovieId(null), 2500);
+    return () => clearTimeout(t);
+  }, [saveFeedbackMovieId]);
 
   const clearError = useCallback(() => setLastError(null), []);
 
@@ -104,9 +112,16 @@ export function App() {
       setLastError({ title: "Validation", message: "Set a current user first." });
       return;
     }
-    const res = await withLoading(() => getRecommendations(currentUserId));
+    const res = await withLoading(async () => {
+      const [rec, likes] = await Promise.all([
+        getRecommendations(currentUserId),
+        listLikes(currentUserId),
+      ]);
+      return { movies: rec.movies, movieIds: likes.movieIds };
+    });
     if (res) {
       setRecommendations(res.movies);
+      setLikedIds(res.movieIds);
     }
   }, [currentUserId, withLoading]);
 
@@ -124,15 +139,20 @@ export function App() {
   const onLike = useCallback(
     async (movieId: string) => {
       if (!currentUserId) return;
+      const wasLiked = likedIds?.includes(movieId) ?? false;
       const res = await withLoading(async () => {
         await addLike(currentUserId, movieId);
         return listLikes(currentUserId);
       });
       if (res) {
         setLikedIds(res.movieIds);
+        const newlyLiked = !wasLiked && res.movieIds.includes(movieId);
+        if (newlyLiked) {
+          setSaveFeedbackMovieId(movieId);
+        }
       }
     },
-    [currentUserId, withLoading]
+    [currentUserId, withLoading, likedIds]
   );
 
   const apiBase =
@@ -165,6 +185,10 @@ export function App() {
           </div>
         )}
       </div>
+
+      <p className="app__save-announce visually-hidden" aria-live="polite" aria-atomic="true">
+        {saveFeedbackMovieId ? "Saved to favorites." : ""}
+      </p>
 
       {lastError && (
         <div className="alert" role="alert">
@@ -292,14 +316,14 @@ export function App() {
                           ))}
                         </div>
                       </div>
-                      <button
-                        type="button"
-                        className="btn--like"
-                        onClick={() => onLike(m.id)}
+                      <LikeHeartButton
+                        movieId={m.id}
+                        movieTitle={m.title}
+                        liked={likedIds?.includes(m.id) ?? false}
+                        showSaveFeedback={saveFeedbackMovieId === m.id}
+                        onPress={() => onLike(m.id)}
                         disabled={loading || !currentUserId}
-                      >
-                        Like
-                      </button>
+                      />
                     </li>
                   ))}
                 </ul>
