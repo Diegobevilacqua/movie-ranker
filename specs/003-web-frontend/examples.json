@@ -1,0 +1,39 @@
+{
+  "cases": [
+    {
+      "name": "recommendations_success_envelope",
+      "description": "Client parser for GET recommendations success",
+      "method": "GET",
+      "path": "/users/u1/recommendations",
+      "expect_status": 200,
+      "expect_body": {
+        "data": {
+          "movies": [
+            { "id": "m1", "title": "Action One", "genres": ["action", "sci-fi"] }
+          ]
+        },
+        "error": null
+      }
+    },
+    {
+      "name": "ui_api_error_envelope_404",
+      "description": "Client error UI must read code and message",
+      "method": "GET",
+      "path": "/users/missing_user_x/recommendations",
+      "expect_status": 404,
+      "expect_body": {
+        "data": null,
+        "error": { "code": "USER_NOT_FOUND", "message": "user not found" }
+      }
+    },
+    {
+      "name": "create_user_body",
+      "description": "Create user request shape matches server",
+      "method": "POST",
+      "path": "/users",
+      "body": { "userId": "demo-user" },
+      "expect_status": 200,
+      "expect_shape": { "data": { "userId": "string", "preferredGenres": "array" }, "error": null }
+    }
+  ]
+}

@@ -11,3 +11,9 @@ venv/
 *.egg-info/
 dist/
 build/
+
+# Node / frontend (specs/003-web-frontend)
+node_modules/
+frontend/dist/
+frontend/coverage/
+*.tsbuildinfo

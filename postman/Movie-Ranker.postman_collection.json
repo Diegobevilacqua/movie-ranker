@@ -1,0 +1,125 @@
+{
+  "info": {
+    "name": "Movie Ranker API",
+    "description": "REST API for the Movie Ranker service. All responses use the JSON envelope: success `{ \"data\": ..., \"error\": null }`, error `{ \"data\": null, \"error\": { \"code\", \"message\" } }`.\n\nAligns with `specs/001-movie-recommendations/contracts/openapi.yaml`, `specs/002-list-liked-movies/contracts/openapi.yaml`, and the live routes in `src/movie_ranker/api/routers/users.py`.\n\n**Note:** The legacy 001 spec listed `GET /movies` and `like` path variants; the implementation exposes `POST /users/{user_id}/likes` and has no public `GET /movies` — this collection matches the **running API**.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "userId",
+      "value": "demo"
+    },
+    {
+      "key": "movieId",
+      "value": "m1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create user (POST /users)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/users",
+            "description": "Registers a user with a stable string id. If the id already exists, the API returns the existing profile (idempotent)."
+          },
+          "response": []
+        },
+        {
+          "name": "Set preferred genres (POST /users/{user_id}/genres)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"genres\": [\"action\", \"drama\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/users/{{userId}}/genres",
+            "description": "Replaces preferred genres. **400** if `genres` is empty or invalid; **404** if user is unknown."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Likes & recommendations",
+      "item": [
+        {
+          "name": "Like a movie (POST /users/{user_id}/likes)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"movieId\": \"{{movieId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/users/{{userId}}/likes",
+            "description": "**400** if movie id is not in the catalog; **404** if user is unknown."
+          },
+          "response": []
+        },
+        {
+          "name": "List liked movie ids (GET /users/{user_id}/likes)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/users/{{userId}}/likes",
+            "description": "Returns `data.movieIds` in ascending lexicographic order. **404** if user is unknown; empty list if no likes."
+          },
+          "response": []
+        },
+        {
+          "name": "Get recommendations (GET /users/{user_id}/recommendations)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/users/{{userId}}/recommendations",
+            "description": "Deterministic shared-genre recommendations, excluding likes. **404** if user is unknown."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from movie_ranker.api.responses import err
@@ -25,6 +26,15 @@ def default_catalog() -> list[Movie]:
 def create_app(*, seed_movies: list[Movie] | None = None) -> FastAPI:
     repo = InMemoryRepository(seed_movies=seed_movies if seed_movies is not None else default_catalog())
     app = FastAPI(title="Movie Ranker", version="0.1.0")
+    # Browser dev: Vite may use 5173, 5174, … if a port is taken — allow the usual range
+    # for 127.0.0.1 and localhost (local dev only; tighten for production if needed).
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origin_regex=r"http://(127\.0\.0\.1|localhost):517[0-9]",
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     app.state.repo = repo
     app.include_router(users.router)
 

@@ -1,0 +1,113 @@
+# Consumer-oriented subset of the Movie Ranker API for the 003 web client.
+# Authoritative full contracts remain under specs/001-movie-recommendations and
+# specs/002-list-liked-movies; this file lists the paths the UI depends on in v1.
+
+openapi: 3.1.0
+info:
+  title: Movie Ranker — Frontend consumer contract (v1)
+  version: 0.1.0
+servers:
+  - url: /
+
+paths:
+  /users:
+    post:
+      summary: Register user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId]
+              properties:
+                userId: { type: string, minLength: 1 }
+      responses:
+        "200":
+          description: Success envelope with userId and preferredGenres
+  /users/{userId}/genres:
+    post:
+      summary: Set preferred genres
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [genres]
+              properties:
+                genres:
+                  type: array
+                  items: { type: string }
+                  minItems: 1
+      responses:
+        "200": { description: Success envelope }
+        "400": { description: Validation error }
+        "404": { description: User not found }
+  /users/{userId}/likes:
+    get:
+      summary: List liked movie ids
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: data.movieIds }
+        "404": { description: User not found }
+    post:
+      summary: Like a movie
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [movieId]
+              properties:
+                movieId: { type: string, minLength: 1 }
+      responses:
+        "200": { description: Success }
+        "400": { description: Invalid movie or validation }
+        "404": { description: User not found }
+  /users/{userId}/recommendations:
+    get:
+      summary: Deterministic recommendations
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: data.movies (MovieOut[]) }
+        "404": { description: User not found }
+
+components:
+  schemas:
+    EnvelopeSuccess:
+      type: object
+      required: [data, error]
+      properties:
+        data: { nullable: true }
+        error: { const: null }
+    EnvelopeError:
+      type: object
+      required: [data, error]
+      properties:
+        data: { const: null }
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }
